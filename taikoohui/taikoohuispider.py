@@ -33,12 +33,12 @@ for i in range(1, 27):
     csv_write = csv.writer(out, dialect='excel')
     content = []
     length = len(span_list)
+    # write the related information into csv file
     for index in range(0, length):
         if index % 5 <= 1:
             if index % 5 == 0:
                 content.append(span_list[index].find('a').text.split(' ')[0])
             else:
-
                 content.append(span_list[index].find('a').text)
         else:
             if index % 5 == 4:
