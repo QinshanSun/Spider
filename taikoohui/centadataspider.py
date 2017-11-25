@@ -100,13 +100,13 @@ def get_detailed_info_by_basic_url():
             td_name = td.find("div")
             if td_name is not None:
                 print td_name.string
-            get_house_info_by_house_url(td_url["href"],td_name.string)
+            get_house_info_by_house_url(td_url["href"], td_name.string)
 
 
 def get_house_info_by_house_url(url, name):
     post_url = home_url + url
     soup = get_content_by_url(post_url)
-    out = codecs.open(name+'.csv', 'a', 'utf_8_sig')
+    out = codecs.open(name + '.csv', 'a', 'utf_8_sig')
     csv_write = csv.writer(out, dialect='excel')
 
     table = soup.find(id="unitTran-main-table")
@@ -134,15 +134,18 @@ def get_house_info_by_house_url(url, name):
                         attrs = data_td.find("span").attrs
                         if attrs.get("class") is not None:
                             if attrs.get("class") == "up":
-                                print remove_space_and_line_break_in_string(str("+")+data_td.find("span").string)
-                                content.append(remove_space_and_line_break_in_string(str("+")+data_td.find("span").string))
+                                print remove_space_and_line_break_in_string(str("+") + data_td.find("span").string)
+                                content.append(
+                                    remove_space_and_line_break_in_string(str("+") + data_td.find("span").string))
                             else:
-                                print remove_space_and_line_break_in_string(str("-")+data_td.find("span").string)
-                                content.append(remove_space_and_line_break_in_string(str("-") + data_td.find("span").string))
+                                print remove_space_and_line_break_in_string(str("-") + data_td.find("span").string)
+                                content.append(
+                                    remove_space_and_line_break_in_string(str("-") + data_td.find("span").string))
                         else:
                             content.append(
                                 remove_space_and_line_break_in_string(data_td.find("span").string))
                 csv_write.writerow(content)
     out.close()
+
 
 get_detailed_info_by_basic_url()
