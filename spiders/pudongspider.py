@@ -8,8 +8,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-
-url_1 = 'http://planning.pudong.gov.cn/WebSite/list.aspx?code=1301'
+#url_1 = 'http://planning.pudong.gov.cn/WebSite/list.aspx?code=1301'
 
 
 def get_plan(session, index, count, url):
@@ -24,7 +23,40 @@ def get_plan(session, index, count, url):
         'ctl00$MainContent$ListPaging1$hfPageCount': count
     }
     response = session.post(url, data)
-    print response.text
+    soup = BeautifulSoup(response.text, "html.parser")
+    print soup.find('table', class_="newslist_tb")
+    return soup
+
+
+def remove_space_and_line_break_in_string(string):
+    if string is not None:
+        return string.replace(' ', '').replace('\r\n', '')
+    else:
+        return ""
+
+
+def get_plan_detail(soup, csv_write):
+    table = soup.find('table', class_="newslist_tb")
+    tr_list = table.find_all('tr')
+    for tr in tr_list:
+        td_list = tr.find_all('td')
+        if len(td_list) != 0:
+            content = []
+            for td in td_list:
+                content.append(remove_space_and_line_break_in_string(td.text))
+                print "Text: " + remove_space_and_line_break_in_string(td.text)
+            csv_write.writerow(content)
+
+
+
+count = input("Please input total page count: ")
+
+url = 'http://planning.pudong.gov.cn/WebSite/list.aspx?code=1401'
+out = codecs.open('plan.csv', 'a', 'utf_8_sig')
+csv_write = csv.writer(out, dialect='excel')
 
 s = requests.session()
-get_plan(s, 1, 27, url_1)
+for i in range(0, count):
+    soup = get_plan(s, i, count, url)
+    get_plan_detail(soup, csv_write)
+out.close()
